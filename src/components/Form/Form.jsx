@@ -39,7 +39,6 @@ const FieldContactStyled = styled(Field)`
 `;
 export const ContactForm = ({ addContact }) => {
   const handleSubmit = (values, { resetForm }) => {
-    //console.log(values);
     addContact(values);
     resetForm();
   };
