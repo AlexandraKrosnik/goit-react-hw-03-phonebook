@@ -33,7 +33,7 @@ export class App extends Component {
   };
   isInListContacts = contact => {
     return !!this.state.contacts.find(
-      c => c.name === contact.name && c.number === contact.number
+      c => c.name.toLowerCase() === contact.name.toLowerCase()
     );
   };
 
@@ -43,11 +43,11 @@ export class App extends Component {
     });
   };
 
-  clearFilter = () => {
+  /*clearFilter = () => {
     this.setState({
       filter: '',
     });
-  };
+  };*/
 
   onfilterContact = () => {
     return this.state.contacts.filter(contact =>
@@ -71,17 +71,17 @@ export class App extends Component {
         <Section>
           <Title>Contacts</Title>
           <Filter
-            OnChange={this.onChangeFilter}
-            onBlur={this.clearFilter}
+            value={this.state.filter}
+            onChange={this.onChangeFilter}
           ></Filter>
-          <Contacts
-            contacts={
-              this.state.filter.length === 0
-                ? this.state.contacts
-                : this.onfilterContact()
-            }
-            onClick={this.onContactDelete}
-          ></Contacts>
+          {this.onfilterContact().length === 0 ? (
+            <p>There is no contact with this name</p>
+          ) : (
+            <Contacts
+              contacts={this.onfilterContact()}
+              onClick={this.onContactDelete}
+            ></Contacts>
+          )}
         </Section>
       </>
     );
