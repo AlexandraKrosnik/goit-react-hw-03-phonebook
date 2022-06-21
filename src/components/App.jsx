@@ -7,16 +7,22 @@ import Filter from './Filter/Filter';
 
 export class App extends Component {
   state = {
-    contacts: [
-      { id: '1AUcOuFAuOSXefevAGMTs', name: 'Sasha', number: '+380636772865' },
-      { id: 'id-1', name: 'Rosie Simpson', number: '+380654591256' },
-      { id: 'id-2', name: 'Hermione Kline', number: '+380654438912' },
-      { id: 'id-3', name: 'Eden Clements', number: '+380656451779' },
-      { id: 'id-4', name: 'Annie Copeland', number: '+380652279126' },
-    ],
+    contacts: [],
     name: '',
     filter: '',
   };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsContacts = JSON.parse(contacts);
+    !!contacts && this.setState({ contacts: parsContacts });
+  }
+  componentDidUpdate(_, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   addContact = ({ name, number }) => {
     let id = nanoid();
     let contact = {
@@ -24,13 +30,13 @@ export class App extends Component {
       name,
       number,
     };
-    console.log();
     this.isInListContacts(contact)
       ? alert(`${name} is already in contacts!`)
       : this.setState(prevState => ({
           contacts: [...prevState.contacts, contact],
         }));
   };
+
   isInListContacts = contact => {
     return !!this.state.contacts.find(
       c => c.name.toLowerCase() === contact.name.toLowerCase()
@@ -75,7 +81,10 @@ export class App extends Component {
             onChange={this.onChangeFilter}
           ></Filter>
           {this.onfilterContact().length === 0 ? (
-            <p>There is no contact with this name</p>
+            <p>
+              There is no contact
+              {!!this.state.contacts.length ? ' with this name' : ''}!
+            </p>
           ) : (
             <Contacts
               contacts={this.onfilterContact()}
